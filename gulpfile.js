@@ -52,6 +52,7 @@ gulp.task('scripts', () => gulp
   .src(getSrc(TYPES.SCRIPTS, TYPES.EXT_SCRIPTS))
   .pipe(babel({
     presets: ['env'],
+    plugins: ['transform-object-rest-spread'],
   }))
   .pipe(uglify())
   .pipe(gulp.dest(config.src.dist)));
