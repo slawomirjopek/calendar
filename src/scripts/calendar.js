@@ -1,8 +1,6 @@
-const parseClassName = (className) => {
-  const reqexp = new RegExp(/\s/g);
-  const trimmed = className.trim();
-  const test = reqexp.test(trimmed);
-  return test ? trimmed.replace(/\s+/g, ' ').split(' ') : trimmed;
+const addClasses = (el, classes) => {
+  const temp = classes.trim().split(/\s*,\s*|\s+/);
+  temp.forEach(className => el.classList.add(className));
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -49,19 +47,18 @@ class Calendar {
 
   createElements() {
     this.dom.container = document.createElement('div');
-
-    this.dom.container.classList.add(this.options.clasess.calendar);
+    addClasses(this.dom.container, this.options.clasess.calendar);
 
     this.dom.header = document.createElement('div');
-    this.dom.header.classList.add(this.options.clasess.header);
+    addClasses(this.dom.header, this.options.clasess.header);
 
     this.dom.content = document.createElement('div');
-    this.dom.content.classList.add(this.options.clasess.content);
+    addClasses(this.dom.content, this.options.clasess.content);
 
     this.dom.button.next = document.createElement('div');
-    this.dom.button.next.classList.add(...parseClassName(this.options.clasess.button.next));
+    addClasses(this.dom.button.next, this.options.clasess.button.next);
 
     this.dom.button.prev = document.createElement('div');
-    this.dom.button.prev.classList.add(...parseClassName(this.options.clasess.button.prev));
+    addClasses(this.dom.button.prev, this.options.clasess.button.prev);
   }
 }
