@@ -83,6 +83,7 @@ gulp.task('lint:scripts', () => gulp
   .src(getSrc(TYPES.SCRIPTS, TYPES.EXT_SCRIPTS, true, ['!node_modules/**']))
   .pipe(eslint({
     fix: true,
+    envs: ['browser'],
   }))
   .pipe(eslint.format())
   .pipe(gulpIf(isFixed, gulp.dest(config.src.scripts)))
