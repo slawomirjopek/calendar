@@ -11,7 +11,11 @@ class Calendar {
       clasess: {
         calendar: 'bw-calendar-container',
         header: 'bw-calendar-header',
-        content: 'bw-calendar-content',
+        grid: {
+          container: 'bw-calendar-grid',
+          currentMonth: 'bw-calendar-grid-current-month',
+          currentDay: 'bw-calendar-grid-current-day',
+        },
         button: {
           next: 'bw-calendar-button bw-calendar-button-next',
           prev: 'bw-calendar-button bw-calendar-button-prev',
@@ -28,7 +32,7 @@ class Calendar {
     this.dom = {
       container: null,
       header: null,
-      content: null,
+      grid: null,
       button: {
         next: null,
         prev: null,
@@ -42,7 +46,9 @@ class Calendar {
 
   initialize() {
     console.log(this);
+
     this.createElements();
+    this.createGrid();
   }
 
   createElements() {
@@ -52,16 +58,14 @@ class Calendar {
     this.dom.header = document.createElement('div');
     addClasses(this.dom.header, this.options.clasess.header);
 
-    this.dom.content = document.createElement('div');
-    addClasses(this.dom.content, this.options.clasess.content);
+    this.dom.grid = document.createElement('div');
+    addClasses(this.dom.grid, this.options.clasess.grid.container);
 
     this.dom.button.next = document.createElement('div');
     addClasses(this.dom.button.next, this.options.clasess.button.next);
 
     this.dom.button.prev = document.createElement('div');
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
-
-    this.createMatrix();
   }
 
   createMatrix() {
@@ -86,20 +90,50 @@ class Calendar {
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < matrixDays; i++) {
       let day = i - matrixPrevMonthDays + 1;
+      let { month } = this.date;
       let current = true;
 
       if (i < matrixPrevMonthDays) {
         day = prevMonthDays - matrixPrevMonthDays + i + 1;
+        month = this.date.month - 1;
         current = false;
       } else if (i >= prevAndCurrentDays) {
         day = i - currentMonthDays - (matrixDays - prevAndCurrentDays);
+        month = this.date.month + 1;
         current = false;
       }
 
       matrix.push({
         day,
+        month,
         current,
       });
     }
+
+    return matrix;
+  }
+
+  createGrid() {
+    const matrix = this.createMatrix();
+
+    // Clear previous grid
+    this.dom.grid.innerHTML = '';
+
+    matrix.forEach(({ day, month, current }) => {
+      const gridDay = document.createElement('div');
+      gridDay.innerHTML = day;
+
+      // If current month
+      if (current) {
+        gridDay.classList.add(this.options.clasess.grid.currentMonth);
+      }
+
+      // If current day
+      if (day === this.date.day && month === this.date.month) {
+        gridDay.classList.add(this.options.clasess.grid.currentDay);
+      }
+
+      this.dom.grid.appendChild(gridDay);
+    });
   }
 }
