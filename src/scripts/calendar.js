@@ -17,8 +17,9 @@ class Calendar {
         header: 'bw-calendar-header',
         grid: {
           container: 'bw-calendar-grid',
-          currentMonth: 'bw-calendar-grid-current-month',
-          currentDay: 'bw-calendar-grid-current-day',
+          currentMonth: 'bw-calendar-grid-month-current',
+          day: 'bw-calendar-grid-day',
+          currentDay: 'bw-calendar-grid-day-current',
         },
         button: {
           next: 'bw-calendar-button bw-calendar-button-next',
@@ -132,6 +133,7 @@ class Calendar {
 
     matrix.forEach(({ day, month, current }) => {
       const gridDay = document.createElement('div');
+      gridDay.classList.add(this.options.clasess.grid.day);
       gridDay.innerHTML = day;
 
       // If current month
