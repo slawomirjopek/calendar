@@ -61,11 +61,14 @@ class Calendar {
     this.dom.button.prev = document.createElement('div');
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
 
-    this.createGrid();
+    this.createMatrix();
   }
 
-  createGrid() {
+  createMatrix() {
+    // Number of days in Current Month
     const currentMonthDays = new Date(this.date.year, this.date.month + 1, 0).getDate();
+
+    // First day of week the beginning of the month (0 - Sunday ... 6 - Saturday)
     let firstDay = new Date(this.date.year, this.date.month).getDay();
     const prevMonthDays = new Date(this.date.year, this.date.month, 0).getDate();
 
@@ -86,10 +89,10 @@ class Calendar {
       let current = true;
 
       if (i < matrixPrevMonthDays) {
-        day = prevMonthDays; // TODO
+        day = prevMonthDays - matrixPrevMonthDays + i + 1;
         current = false;
       } else if (i >= prevAndCurrentDays) {
-        day = matrixDays - i;
+        day = i - currentMonthDays - (matrixDays - prevAndCurrentDays);
         current = false;
       }
 
@@ -98,7 +101,5 @@ class Calendar {
         current,
       });
     }
-
-    console.log(matrix);
   }
 }
