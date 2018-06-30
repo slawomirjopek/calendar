@@ -6,6 +6,10 @@ const addClasses = (el, classes) => {
 // eslint-disable-next-line no-unused-vars
 class Calendar {
   constructor(options) {
+    if (!options.target || typeof options.target !== 'object') {
+      throw new Error('Missing calendar container');
+    }
+
     const date = new Date();
     const defaultOptions = {
       clasess: {
@@ -49,6 +53,7 @@ class Calendar {
 
     this.createElements();
     this.createGrid();
+    this.render();
   }
 
   createElements() {
@@ -66,6 +71,12 @@ class Calendar {
 
     this.dom.button.prev = document.createElement('div');
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
+
+    this.dom.header.appendChild(this.dom.button.prev);
+    this.dom.header.appendChild(this.dom.button.next);
+
+    this.dom.container.appendChild(this.dom.header);
+    this.dom.container.appendChild(this.dom.grid);
   }
 
   createMatrix() {
@@ -135,5 +146,9 @@ class Calendar {
 
       this.dom.grid.appendChild(gridDay);
     });
+  }
+
+  render() {
+    this.options.target.appendChild(this.dom.container);
   }
 }
