@@ -60,5 +60,45 @@ class Calendar {
 
     this.dom.button.prev = document.createElement('div');
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
+
+    this.createGrid();
+  }
+
+  createGrid() {
+    const currentMonthDays = new Date(this.date.year, this.date.month + 1, 0).getDate();
+    let firstDay = new Date(this.date.year, this.date.month).getDay();
+    const prevMonthDays = new Date(this.date.year, this.date.month, 0).getDate();
+
+    // English calendar first day is Sunday, but in Poland its Monday :)
+    if (!firstDay) {
+      firstDay = 7;
+    }
+
+    const matrix = [];
+    const matrixPrevMonthDays = firstDay - 1;
+    const prevAndCurrentDays = matrixPrevMonthDays + currentMonthDays;
+    const matrixNextMonthDays = Math.ceil(prevAndCurrentDays / 7) * 7 - prevAndCurrentDays;
+    const matrixDays = prevAndCurrentDays + matrixNextMonthDays;
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < matrixDays; i++) {
+      let day = i - matrixPrevMonthDays + 1;
+      let current = true;
+
+      if (i < matrixPrevMonthDays) {
+        day = prevMonthDays; // TODO
+        current = false;
+      } else if (i >= prevAndCurrentDays) {
+        day = matrixDays - i;
+        current = false;
+      }
+
+      matrix.push({
+        day,
+        current,
+      });
+    }
+
+    console.log(matrix);
   }
 }
