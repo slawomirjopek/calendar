@@ -10,19 +10,24 @@ const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
 const gulpIf = require('gulp-if');
 const uglify = require('gulp-uglify');
+const browserSync = require('browser-sync').create();
+require('gulp-watch');
 
 const TYPES = {
   STYLES: 'styles',
   SCRIPTS: 'scripts',
   DIST: 'dist',
+  EXAMPLE: 'example',
   EXT_STYLES: 'scss',
   EXT_SCRIPTS: 'js',
+  EXT_TEMPLATE: 'html',
 };
 
 const config = { src: {} };
 config.src[TYPES.STYLES] = './src/styles';
 config.src[TYPES.SCRIPTS] = './src/scripts';
 config.src[TYPES.DIST] = './dist';
+config.src[TYPES.EXAMPLE] = './example';
 
 function getSrc(folder, ext, disableVendor, additionalRules) {
   const src = [`${config.src[folder]}/**/*.${ext}`];
@@ -46,7 +51,8 @@ gulp.task('styles', () => gulp
   .pipe(sass({
     outputStyle: 'compressed',
   }))
-  .pipe(gulp.dest(config.src.dist)));
+  .pipe(gulp.dest(config.src.dist))
+  .pipe(browserSync.stream()));
 
 gulp.task('scripts', () => gulp
   .src(getSrc(TYPES.SCRIPTS, TYPES.EXT_SCRIPTS))
@@ -55,7 +61,8 @@ gulp.task('scripts', () => gulp
     plugins: ['transform-object-rest-spread'],
   }))
   .pipe(uglify())
-  .pipe(gulp.dest(config.src.dist)));
+  .pipe(gulp.dest(config.src.dist))
+  .pipe(browserSync.stream()));
 
 gulp.task('lint:styles', () => {
   const stylelintConfig = {
@@ -89,4 +96,14 @@ gulp.task('lint:scripts', () => gulp
   .pipe(gulpIf(isFixed, gulp.dest(config.src.scripts)))
   .pipe(eslint.failAfterError()));
 
-gulp.task('default', gulp.series('clean', 'lint:styles', 'lint:scripts', gulp.parallel('styles', 'scripts')));
+gulp.task('watch', () => {
+  gulp.watch(getSrc(TYPES.STYLES, TYPES.EXT_STYLES), gulp.series('lint:styles', 'styles'));
+  gulp.watch(getSrc(TYPES.SCRIPTS, TYPES.EXT_SCRIPTS), gulp.series('lint:scripts', 'scripts'));
+  gulp.watch(getSrc(TYPES.EXAMPLE, TYPES.EXT_TEMPLATE)).on('change', browserSync.reload);
+});
+
+gulp.task('serve', gulp.parallel('watch', () => browserSync.init({
+  server: [config.src.example, config.src.dist],
+})));
+
+gulp.task('default', gulp.series('clean', 'lint:styles', 'lint:scripts', gulp.parallel('styles', 'scripts'), 'serve'));
