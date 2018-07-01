@@ -103,7 +103,7 @@ gulp.task('watch', () => {
 });
 
 gulp.task('serve', gulp.parallel('watch', () => browserSync.init({
-  server: [config.src.example, config.src.dist],
+  server: ['./', config.src.example],
 })));
 
 gulp.task('default', gulp.series('clean', 'lint:styles', 'lint:scripts', gulp.parallel('styles', 'scripts'), 'serve'));
