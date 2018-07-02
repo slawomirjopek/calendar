@@ -1,3 +1,48 @@
-.bw-calendar-grid-day {
-  background: green;
+@import url('https://fonts.googleapis.com/css?family=Oswald:200,300,400&subset=latin-ext');
+
+$color-silver: #efefef;
+$color-silver-light: #fbfbfb;
+$color-silver-dark: #464646;
+
+.bw-calendar {
+  &-container {
+    width: 100%;
+    max-width: 320px;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  &-header {
+    height: 45px;
+  }
+
+  &-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    &-day {
+      width: 1 / 7 * 100%;
+      padding-top: 1 / 7 * 100%;
+      position: relative;
+      background: $color-silver;
+
+      &-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        color: $color-silver-dark;
+        font-weight: 100;
+        cursor: pointer;
+      }
+    }
+
+    &-month-current {
+      background: $color-silver-light;
+    }
+  }
 }
