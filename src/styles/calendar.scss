@@ -1,48 +1,87 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald:200,300,400&subset=latin-ext');
 
+$color-black: #000;
+$color-white: #fff;
 $color-silver: #efefef;
 $color-silver-light: #fbfbfb;
 $color-silver-dark: #464646;
 
 .bw-calendar {
-  &-container {
-    width: 100%;
-    max-width: 320px;
-    font-family: 'Oswald', sans-serif;
-  }
-
-  &-header {
+  width: 100%;
+  max-width: 320px;
+  font-family: 'Oswald', sans-serif;
+  
+  &__header {
+    display: flex;
     height: 45px;
+    padding: 0 40px;
+    align-items: center;
+    position: relative;
   }
 
-  &-grid {
+  &__grid {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
+  }
 
-    &-day {
-      width: 1 / 7 * 100%;
-      padding-top: 1 / 7 * 100%;
-      position: relative;
-      background: $color-silver;
+  &__day {
+    width: 1 / 7 * 100%;
+    padding-top: 1 / 7 * 100%;
+    position: relative;
+    background: $color-silver;
 
-      &-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        color: $color-silver-dark;
-        font-weight: 100;
-        cursor: pointer;
-      }
+    &-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      color: $color-silver-dark;
+      font-weight: 100;
+      cursor: pointer;
     }
 
-    &-month-current {
+    &--current-month {
       background: $color-silver-light;
+    }
+    
+    &--current,
+    &:hover {
+      background: $color-black;
+
+      .bw-calendar__day-content {
+        color: $color-white;
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    font-family: 'Arial', sans-serif;
+    font-size: 30px;
+    line-height: 1;
+    color: $color-black;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-silver;
+    }
+
+    &--prev {
+      left: 0;
+    }
+
+    &--next {
+      right: 0;
     }
   }
 }

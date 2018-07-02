@@ -13,18 +13,18 @@ class Calendar {
     const date = new Date();
     const defaultOptions = {
       clasess: {
-        calendar: 'bw-calendar-container',
-        header: 'bw-calendar-header',
+        calendar: 'bw-calendar',
+        header: 'bw-calendar__header',
         grid: {
-          container: 'bw-calendar-grid',
-          currentMonth: 'bw-calendar-grid-month-current',
-          day: 'bw-calendar-grid-day',
-          dayContent: 'bw-calendar-grid-day-content',
-          currentDay: 'bw-calendar-grid-day-current',
+          container: 'bw-calendar__grid',
+          currentMonth: 'bw-calendar__day--current-month',
+          day: 'bw-calendar__day',
+          dayContent: 'bw-calendar__day-content',
+          currentDay: 'bw-calendar__day--current',
         },
         button: {
-          next: 'bw-calendar-button bw-calendar-button-next',
-          prev: 'bw-calendar-button bw-calendar-button-prev',
+          next: 'bw-calendar__button bw-calendar__button--next',
+          prev: 'bw-calendar__button bw-calendar__button--prev',
         },
       },
     };
@@ -69,9 +69,11 @@ class Calendar {
     addClasses(this.dom.grid, this.options.clasess.grid.container);
 
     this.dom.button.next = document.createElement('div');
+    this.dom.button.next.innerHTML = '>';
     addClasses(this.dom.button.next, this.options.clasess.button.next);
 
     this.dom.button.prev = document.createElement('div');
+    this.dom.button.prev.innerHTML = '<';
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
 
     this.dom.header.appendChild(this.dom.button.prev);
