@@ -61,7 +61,7 @@ class Calendar {
 
     this.date = {
       grid: {
-        day: date.getDate(),
+        day: null,
         month: date.getMonth(),
         year: date.getFullYear(),
       },
@@ -95,6 +95,7 @@ class Calendar {
     this.createGrid();
     this.attachEvents();
     this.render();
+    this.onLoad();
   }
 
   createElements() {
@@ -218,7 +219,17 @@ class Calendar {
     this.dom.header.date.innerHTML = `<span>${month} ${this.date.grid.year}</span>`;
   }
 
-  prev() {
+  onLoad() {
+    const { onLoad } = this.options;
+
+    console.log('%c# BlueWolf Calendar loaded! #', 'color: blue');
+
+    if (onLoad && typeof onLoad === 'function') {
+      onLoad(this);
+    }
+  }
+
+  prev(cb) {
     if (this.date.grid.month !== 0) {
       this.date.grid.month = this.date.grid.month - 1;
     } else {
@@ -228,9 +239,13 @@ class Calendar {
 
     this.updateHeader();
     this.createGrid();
+
+    if (cb && typeof cb === 'function') {
+      cb(this);
+    }
   }
 
-  next() {
+  next(cb) {
     if (this.date.grid.month !== 11) {
       this.date.grid.month = this.date.grid.month + 1;
     } else {
@@ -240,11 +255,21 @@ class Calendar {
 
     this.updateHeader();
     this.createGrid();
+
+    if (cb && typeof cb === 'function') {
+      cb(this);
+    }
   }
 
   attachEvents() {
-    this.dom.button.prev.addEventListener(TYPES.EVENT.CLICK, this.prev.bind(this));
-    this.dom.button.next.addEventListener(TYPES.EVENT.CLICK, this.next.bind(this));
+    this.dom.button.prev.addEventListener(
+      TYPES.EVENT.CLICK,
+      this.prev.bind(this, this.options.onGridChange),
+    );
+    this.dom.button.next.addEventListener(
+      TYPES.EVENT.CLICK,
+      this.next.bind(this, this.options.onGridChange),
+    );
   }
 
   detachEvents() {

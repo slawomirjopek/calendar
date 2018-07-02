@@ -4,15 +4,45 @@
     <meta charset="UTF-8">
     <title>Calendar</title>
     <link rel='stylesheet' href="../dist/calendar.css">
+    <style>
+      .info {
+        margin-top: 40px;
+        font-family: 'Oswald', sans-serif;
+      }
+      .info p {
+        margin: 5px 0;
+      }
+    </style>
 </head>
 <body>
   <div class="bwCalendar"></div>
+  <div class="info">
+    <p>Selected date: <span class="date-selected"></span></p>
+    <p>Grid date: <span class="date-grid"></span></p>
+  </div>
 
   <script src="../dist/calendar.js" type="text/javascript"></script>
   <script type="text/javascript">
     var calendar = new Calendar({
       target: document.querySelector(".bwCalendar"),
+      onLoad: function(calendar) {
+        updateInfo(document.querySelector(".date-selected"), calendar.date.selected);
+        updateInfo(document.querySelector(".date-grid"), calendar.date.grid);
+      },
+      onGridChange: function(calendar) {
+        updateInfo(document.querySelector(".date-grid"), calendar.date.grid);
+      }
     });
+
+    var $selected = document.querySelector(".date-selected");
+    var $grid = document.querySelector(".date-grid");
+
+    function updateInfo(target, date) {
+      if (!date.day) {
+        return target.innerHTML = (date.month + 1) + '-' + date.year;
+      }
+      target.innerHTML = date.day + '-' + (date.month + 1) + '-' + date.year;
+    }
   </script>
 </body>
 </html>
