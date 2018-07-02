@@ -3,6 +3,12 @@ const addClasses = (el, classes) => {
   temp.forEach(className => el.classList.add(className));
 };
 
+const TYPES = {
+  EVENT: {
+    CLICK: 'click',
+  },
+};
+
 // eslint-disable-next-line no-unused-vars
 class Calendar {
   constructor(options) {
@@ -18,7 +24,10 @@ class Calendar {
     const defaultOptions = {
       clasess: {
         calendar: 'bw-calendar',
-        header: 'bw-calendar__header',
+        header: {
+          container: 'bw-calendar__header',
+          date: 'bw-calendar__header-date',
+        },
         grid: {
           container: 'bw-calendar__grid',
           header: 'bw-calendar__grid-header',
@@ -51,14 +60,24 @@ class Calendar {
     };
 
     this.date = {
-      day: date.getDate(),
-      month: date.getMonth(),
-      year: date.getFullYear(),
+      grid: {
+        day: date.getDate(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+      },
+      selected: {
+        day: date.getDate(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+      },
     };
 
     this.dom = {
       container: null,
-      header: null,
+      header: {
+        container: null,
+        date: null,
+      },
       grid: null,
       button: {
         next: null,
@@ -74,6 +93,7 @@ class Calendar {
   initialize() {
     this.createElements();
     this.createGrid();
+    this.attachEvents();
     this.render();
   }
 
@@ -81,10 +101,11 @@ class Calendar {
     this.dom.container = document.createElement('div');
     addClasses(this.dom.container, this.options.clasess.calendar);
 
-    this.dom.header = document.createElement('div');
-    const month = this.options.months[this.date.month];
-    this.dom.header.innerHTML = `<span>${month} ${this.date.year}</span>`;
-    addClasses(this.dom.header, this.options.clasess.header);
+    this.dom.header.container = document.createElement('div');
+    addClasses(this.dom.header.container, this.options.clasess.header.container);
+    this.dom.header.date = document.createElement('span');
+    this.dom.header.date.classList.add(this.options.clasess.header.date);
+    this.updateHeader();
 
     this.dom.grid = document.createElement('div');
     addClasses(this.dom.grid, this.options.clasess.grid.container);
@@ -97,20 +118,21 @@ class Calendar {
     this.dom.button.prev.innerHTML = '<';
     addClasses(this.dom.button.prev, this.options.clasess.button.prev);
 
-    this.dom.header.appendChild(this.dom.button.prev);
-    this.dom.header.appendChild(this.dom.button.next);
+    this.dom.header.container.appendChild(this.dom.header.date);
+    this.dom.header.container.appendChild(this.dom.button.prev);
+    this.dom.header.container.appendChild(this.dom.button.next);
 
-    this.dom.container.appendChild(this.dom.header);
+    this.dom.container.appendChild(this.dom.header.container);
     this.dom.container.appendChild(this.dom.grid);
   }
 
   createMatrix() {
     // Number of days in Current Month
-    const currentMonthDays = new Date(this.date.year, this.date.month + 1, 0).getDate();
+    const currentMonthDays = new Date(this.date.grid.year, this.date.grid.month + 1, 0).getDate();
 
     // First day of week the beginning of the month (0 - Sunday ... 6 - Saturday)
-    let firstDay = new Date(this.date.year, this.date.month).getDay();
-    const prevMonthDays = new Date(this.date.year, this.date.month, 0).getDate();
+    let firstDay = new Date(this.date.grid.year, this.date.grid.month).getDay();
+    const prevMonthDays = new Date(this.date.grid.year, this.date.grid.month, 0).getDate();
 
     // English calendar first day is Sunday, but in Poland its Monday :)
     if (!firstDay) {
@@ -126,16 +148,16 @@ class Calendar {
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < matrixDays; i++) {
       let day = i - matrixPrevMonthDays + 1;
-      let { month } = this.date;
+      let { month } = this.date.grid;
       let current = true;
 
       if (i < matrixPrevMonthDays) {
         day = prevMonthDays - matrixPrevMonthDays + i + 1;
-        month = this.date.month - 1;
+        month = this.date.grid.month - 1;
         current = false;
       } else if (i >= prevAndCurrentDays) {
         day = i - currentMonthDays - (matrixDays - prevAndCurrentDays);
-        month = this.date.month + 1;
+        month = this.date.grid.month + 1;
         current = false;
       }
 
@@ -179,12 +201,55 @@ class Calendar {
       }
 
       // If current day
-      if (day === this.date.day && month === this.date.month) {
+      if (
+        day === this.date.selected.day
+        && month === this.date.selected.month
+        && this.date.grid.year === this.date.selected.year
+      ) {
         gridDay.classList.add(this.options.clasess.grid.currentDay);
       }
 
       this.dom.grid.appendChild(gridDay);
     });
+  }
+
+  updateHeader() {
+    const month = this.options.months[this.date.grid.month];
+    this.dom.header.date.innerHTML = `<span>${month} ${this.date.grid.year}</span>`;
+  }
+
+  prev() {
+    if (this.date.grid.month !== 0) {
+      this.date.grid.month = this.date.grid.month - 1;
+    } else {
+      this.date.grid.month = 11;
+      this.date.grid.year = this.date.grid.year - 1;
+    }
+
+    this.updateHeader();
+    this.createGrid();
+  }
+
+  next() {
+    if (this.date.grid.month !== 11) {
+      this.date.grid.month = this.date.grid.month + 1;
+    } else {
+      this.date.grid.month = 0;
+      this.date.grid.year = this.date.grid.year + 1;
+    }
+
+    this.updateHeader();
+    this.createGrid();
+  }
+
+  attachEvents() {
+    this.dom.button.prev.addEventListener(TYPES.EVENT.CLICK, this.prev.bind(this));
+    this.dom.button.next.addEventListener(TYPES.EVENT.CLICK, this.next.bind(this));
+  }
+
+  detachEvents() {
+    this.dom.button.prev.removeEventListener(TYPES.EVENT.CLICK, this.prev.bind(this));
+    this.dom.button.next.removeEventListener(TYPES.EVENT.CLICK, this.next.bind(this));
   }
 
   render() {
