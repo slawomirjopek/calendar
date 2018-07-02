@@ -6,6 +6,8 @@ $color-silver: #efefef;
 $color-silver-light: #fbfbfb;
 $color-silver-dark: #464646;
 
+$size1-7: 1 / 7 * 100%;
+
 .bw-calendar {
   width: 100%;
   max-width: 320px;
@@ -23,11 +25,22 @@ $color-silver-dark: #464646;
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
+
+    &-header {
+      display: flex;
+      width: 100%;
+      margin-bottom: 10px;
+
+      &-day {
+        flex: 0 0 $size1-7;
+        text-align: center
+      }
+    }
   }
 
   &__day {
-    width: 1 / 7 * 100%;
-    padding-top: 1 / 7 * 100%;
+    width: $size1-7;
+    padding-top: $size1-7;
     position: relative;
     background: $color-silver;
 
@@ -43,6 +56,7 @@ $color-silver-dark: #464646;
       color: $color-silver-dark;
       font-weight: 100;
       cursor: pointer;
+      user-select: none;
     }
 
     &--current-month {
@@ -71,6 +85,7 @@ $color-silver-dark: #464646;
     line-height: 1;
     color: $color-black;
     cursor: pointer;
+    user-select: none;
 
     &:hover {
       background: $color-silver;

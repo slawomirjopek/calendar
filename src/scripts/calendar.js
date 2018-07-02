@@ -10,6 +10,10 @@ class Calendar {
       throw new Error('Missing calendar container');
     }
 
+    if (options.days && options.days.length !== 7) {
+      throw new Error('Invalid days array');
+    }
+
     const date = new Date();
     const defaultOptions = {
       clasess: {
@@ -17,6 +21,8 @@ class Calendar {
         header: 'bw-calendar__header',
         grid: {
           container: 'bw-calendar__grid',
+          header: 'bw-calendar__grid-header',
+          headerDay: 'bw-calendar__grid-header-day',
           currentMonth: 'bw-calendar__day--current-month',
           day: 'bw-calendar__day',
           dayContent: 'bw-calendar__day-content',
@@ -27,6 +33,7 @@ class Calendar {
           prev: 'bw-calendar__button bw-calendar__button--prev',
         },
       },
+      days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
     };
 
     this.date = {
@@ -51,8 +58,6 @@ class Calendar {
   }
 
   initialize() {
-    console.log(this);
-
     this.createElements();
     this.createGrid();
     this.render();
@@ -133,6 +138,19 @@ class Calendar {
 
     // Clear previous grid
     this.dom.grid.innerHTML = '';
+
+    // Create grid header with day names
+    const gridHeader = document.createElement('div');
+    gridHeader.classList.add(this.options.clasess.grid.header);
+
+    this.options.days.forEach((day) => {
+      const gridHeaderDay = document.createElement('div');
+      gridHeaderDay.classList.add(this.options.clasess.grid.headerDay);
+      gridHeaderDay.innerHTML = day;
+      gridHeader.appendChild(gridHeaderDay);
+    });
+
+    this.dom.grid.appendChild(gridHeader);
 
     matrix.forEach(({ day, month, current }) => {
       const gridDay = document.createElement('div');
