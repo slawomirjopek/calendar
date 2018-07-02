@@ -34,6 +34,20 @@ class Calendar {
         },
       },
       days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+      months: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ],
     };
 
     this.date = {
@@ -68,6 +82,8 @@ class Calendar {
     addClasses(this.dom.container, this.options.clasess.calendar);
 
     this.dom.header = document.createElement('div');
+    const month = this.options.months[this.date.month];
+    this.dom.header.innerHTML = `<span>${month} ${this.date.year}</span>`;
     addClasses(this.dom.header, this.options.clasess.header);
 
     this.dom.grid = document.createElement('div');
