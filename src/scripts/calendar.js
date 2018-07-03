@@ -83,6 +83,7 @@ class Calendar {
         next: null,
         prev: null,
       },
+      currentDay: null,
     };
 
     this.options = Object.assign({}, defaultOptions, options);
@@ -149,22 +150,25 @@ class Calendar {
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < matrixDays; i++) {
       let day = i - matrixPrevMonthDays + 1;
-      let { month } = this.date.grid;
+      let { month, year } = this.date.grid;
       let current = true;
 
       if (i < matrixPrevMonthDays) {
         day = prevMonthDays - matrixPrevMonthDays + i + 1;
-        month = this.date.grid.month - 1;
+        month = month === 0 ? 11 : this.date.grid.month - 1;
+        year = month === 11 ? year - 1 : year;
         current = false;
       } else if (i >= prevAndCurrentDays) {
         day = i - currentMonthDays - (matrixDays - prevAndCurrentDays);
-        month = this.date.grid.month + 1;
+        month = month === 11 ? 0 : this.date.grid.month + 1;
+        year = month === 0 ? year + 1 : year;
         current = false;
       }
 
       matrix.push({
         day,
         month,
+        year,
         current,
       });
     }
@@ -191,10 +195,20 @@ class Calendar {
 
     this.dom.grid.appendChild(gridHeader);
 
-    matrix.forEach(({ day, month, current }) => {
+    matrix.forEach(({
+      day, month, year, current,
+    }) => {
       const gridDay = document.createElement('div');
+      const gridDayContent = document.createElement('div');
+
+      gridDayContent.classList.add(this.options.clasess.grid.dayContent);
+      gridDayContent.dataset.day = day;
+      gridDayContent.dataset.month = month;
+      gridDayContent.dataset.year = year;
+      gridDayContent.innerHTML = day;
+
       gridDay.classList.add(this.options.clasess.grid.day);
-      gridDay.innerHTML = `<div class="${this.options.clasess.grid.dayContent}">${day}</div>`;
+      gridDay.appendChild(gridDayContent);
 
       // If current month
       if (current) {
@@ -205,9 +219,9 @@ class Calendar {
       if (
         day === this.date.selected.day
         && month === this.date.selected.month
-        && this.date.grid.year === this.date.selected.year
+        && year === this.date.selected.year
       ) {
-        gridDay.classList.add(this.options.clasess.grid.currentDay);
+        this.setCurrentDayElement(gridDay);
       }
 
       this.dom.grid.appendChild(gridDay);
@@ -217,6 +231,17 @@ class Calendar {
   updateHeader() {
     const month = this.options.months[this.date.grid.month];
     this.dom.header.date.innerHTML = `<span>${month} ${this.date.grid.year}</span>`;
+  }
+
+  setCurrentDayElement(element) {
+    const { currentDay } = this.options.clasess.grid;
+
+    if (this.dom.currentDay) {
+      this.dom.currentDay.classList.remove(currentDay);
+    }
+
+    this.dom.currentDay = element;
+    this.dom.currentDay.classList.add(currentDay);
   }
 
   onLoad() {
@@ -231,8 +256,26 @@ class Calendar {
 
   onSelect(cb, e) {
     // Only day content (excluding day names)
+    e.stopPropagation();
+
     if (e.target && e.target.classList.contains(this.options.clasess.grid.dayContent)) {
-      // @TODO update this.date.selected
+      // Update selected date
+      const {
+        day,
+        month,
+        year,
+      } = e.target.dataset;
+
+      // @TODO year
+      this.date.selected = {
+        day: parseInt(day, 10),
+        month: parseInt(month, 10),
+        year: parseInt(year, 10),
+      };
+
+      // Add/remove selected class
+      this.setCurrentDayElement(e.target.parentNode);
+
       // Execute user callback
       if (cb && typeof cb === 'function') {
         cb(this);
