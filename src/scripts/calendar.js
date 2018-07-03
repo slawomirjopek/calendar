@@ -153,13 +153,16 @@ class Calendar {
       let { month, year } = this.date.grid;
       let current = true;
 
+      // If outside current month
+      // before
       if (i < matrixPrevMonthDays) {
         day = prevMonthDays - matrixPrevMonthDays + i + 1;
         month = month === 0 ? 11 : this.date.grid.month - 1;
         year = month === 11 ? year - 1 : year;
         current = false;
+      // after
       } else if (i >= prevAndCurrentDays) {
-        day = i - currentMonthDays - (matrixDays - prevAndCurrentDays);
+        day = i + 1 - matrixPrevMonthDays - currentMonthDays;
         month = month === 11 ? 0 : this.date.grid.month + 1;
         year = month === 0 ? year + 1 : year;
         current = false;
