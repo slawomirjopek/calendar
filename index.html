@@ -33,8 +33,7 @@
         updateInfo(document.querySelector(".date-grid"), calendar.date.grid);
       },
       onSelect: function(calendar) {
-        console.log('Date selected', calendar);
-        // @TODO update $selected
+        updateInfo(document.querySelector(".date-selected"), calendar.date.selected);
       }
     });
 
