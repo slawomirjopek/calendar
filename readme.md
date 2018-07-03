@@ -1,6 +1,9 @@
 # Calendar
 
-Vanilla Javascript calendar
+Vanilla Javascript calendar   
+
+## Demo
+[https://slawomirjopek.github.io/calendar/](https://slawomirjopek.github.io/calendar/)
 
 ### Installing
 
