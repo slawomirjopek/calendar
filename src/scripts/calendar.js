@@ -258,9 +258,9 @@ class Calendar {
   }
 
   onSelect(cb, e) {
-    // Only day content (excluding day names)
     e.stopPropagation();
 
+    // Only day content (excluding day names)
     if (e.target && e.target.classList.contains(this.options.clasess.grid.dayContent)) {
       // Update selected date
       const {
@@ -333,8 +333,6 @@ class Calendar {
       this.onSelect.bind(this, this.options.onSelect),
     );
   }
-
-  // @TODO detachEvents
 
   render() {
     this.options.target.appendChild(this.dom.container);
