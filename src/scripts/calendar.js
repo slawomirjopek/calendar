@@ -229,6 +229,17 @@ class Calendar {
     }
   }
 
+  onSelect(cb, e) {
+    // Only day content (excluding day names)
+    if (e.target && e.target.classList.contains(this.options.clasess.grid.dayContent)) {
+      // @TODO update this.date.selected
+      // Execute user callback
+      if (cb && typeof cb === 'function') {
+        cb(this);
+      }
+    }
+  }
+
   prev(cb) {
     if (this.date.grid.month !== 0) {
       this.date.grid.month = this.date.grid.month - 1;
@@ -270,12 +281,14 @@ class Calendar {
       TYPES.EVENT.CLICK,
       this.next.bind(this, this.options.onGridChange),
     );
+    // Event delegation
+    this.dom.grid.addEventListener(
+      TYPES.EVENT.CLICK,
+      this.onSelect.bind(this, this.options.onSelect),
+    );
   }
 
-  detachEvents() {
-    this.dom.button.prev.removeEventListener(TYPES.EVENT.CLICK, this.prev.bind(this));
-    this.dom.button.next.removeEventListener(TYPES.EVENT.CLICK, this.next.bind(this));
-  }
+  // @TODO detachEvents
 
   render() {
     this.options.target.appendChild(this.dom.container);
